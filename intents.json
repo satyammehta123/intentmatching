@@ -1,0 +1,187 @@
+{
+    "intents": [
+      {
+        "tag": "Immigration Records",
+        "patterns": [
+          "How can I access my own immigration records?",
+          "What documents are required to apply for immigration status?",
+          "Can I request information about my ancestors' immigration history?",
+          "Are immigration records accessible to the public?",
+          "How long does it typically take to receive information about my immigration status?",
+          "Can immigration documentation be used as proof of citizenship?",
+          "What information is typically included in immigration records?",
+          "Are there any fees associated with obtaining immigration information?",
+          "Can immigration data be used to trace family history or genealogy?",
+          "How do I request information about immigration procedures from a specific country?",
+          "Can immigration documents be corrected or amended if there are errors?",
+          "Are there any restrictions on accessing historical immigration information?",
+          "How far back do immigration records typically go?",
+          "Can immigration files be used as evidence for legal proceedings?",
+          "What happens to immigration documentation when a person becomes a citizen?",
+          "Can immigration records be used to track a person's travel history?",
+          "Are there any privacy concerns associated with accessing immigration data?",
+          "How can I obtain immigration information for research purposes?",
+          "Can immigration records be used to determine someone's eligibility for certain benefits or programs?",
+          "Are immigration procedures standardized in different countries?"
+        ],
+        "responses": [
+          "It seems like you are looking for Immigration Records"
+        ]       
+      },
+
+
+
+      {
+        "tag": "Travel Records",
+        "patterns": [
+          "How can I access information about my travel history?",
+          "What documents are required to obtain my travel details?",
+          "Can I request travel information for past trips?",
+          "Are travel records accessible to the public?",
+          "How long does it typically take to receive travel information after making a request?",
+          "Can travel documentation be used as proof of travel for visa applications?",
+          "What information is typically included in travel documentation?",
+          "Are there any fees associated with obtaining travel information?",
+          "Can travel data be used to trace someone's itinerary or travel patterns?",
+          "How do I request information about my previous travels from a specific airline or immigration authority?",
+          "Can travel documents be corrected or amended if there are errors?",
+          "Are there any restrictions on accessing historical travel information?",
+          "How far back do travel records typically go?",
+          "Can travel documents be used as evidence for legal or insurance purposes?",
+          "What happens to travel documentation after a trip is completed?",
+          "Can travel records be used to track a person's entry and exit from a country?",
+          "Are there any privacy concerns associated with accessing travel data?",
+          "How can I obtain travel information for research or personal purposes?",
+          "Can travel records be used to determine eligibility for certain travel-related benefits or programs?",
+          "Are travel procedures standardized across different airlines or countries?"
+        ],
+        "responses": [
+          "It seems like you are looking for Travel Records"
+        ]       
+      },
+
+
+
+      {
+        "tag": "IRS Records",
+        "patterns": [
+          "How can I access my past tax filings and returns?",
+          "What documents are required when obtaining IRS information?",
+          "Can I request my tax history from previous years?",
+          "Are IRS documents accessible to taxpayers?",
+          "How long does it typically take to receive information from the IRS?",
+          "Can IRS filings be used as proof of income or deductions?",
+          "What information is typically included in tax documents from the IRS?",
+          "Are there any fees associated with obtaining IRS information?",
+          "Can IRS data be used to analyze personal or business financial trends?",
+          "How do I request information from the IRS for a specific tax year?",
+          "Can IRS documents be corrected or amended if errors are found?",
+          "Are there any restrictions on accessing historical tax information from the IRS?",
+          "How far back do IRS tax documents typically go?",
+          "Can IRS records be used as evidence in tax-related legal cases?",
+          "What happens to tax documents after the IRS processes them?",
+          "Can IRS data be used to track a person's tax compliance history?",
+          "Are there any privacy concerns associated with accessing IRS information?",
+          "How can I obtain IRS information for research or financial planning purposes?",
+          "Can IRS documents be used to determine eligibility for certain tax benefits or deductions?",
+          "Are tax procedures and regulations consistent across different tax jurisdictions?"
+        ],
+        "responses": [
+          "It seems like you are looking for IRS Records"
+        ]       
+      },
+
+
+
+      {
+        "tag": "Medical Records",
+        "patterns": [
+          "How can I request a copy of my medical history?",
+          "What is the process for accessing my personal health information?",
+          "Are medical records automatically shared between healthcare providers?",
+          "Can I request medical records for a deceased family member?",
+          "How long are medical records typically kept by healthcare providers?",
+          "Can I obtain medical records for a specific procedure or treatment?",
+          "What steps can I take to ensure the privacy and security of my medical records?",
+          "Can I request amendments or corrections to my medical records?",
+          "How do I authorize the release of my medical records to a third party?",
+          "Are medical records accessible online for patients?",
+          "Can I obtain my child's medical records as their parent or guardian?",
+          "How can I obtain medical records for research purposes?",
+          "What information is typically included in medical records?",
+          "Are there any fees associated with requesting medical records?",
+          "Can I request medical records from a previous healthcare provider if I have changed doctors?",
+          "Can medical records be used as evidence in legal cases?",
+          "How are electronic medical records protected from unauthorized access?",
+          "Can I obtain medical records from a hospital stay or emergency room visit?",
+          "Are mental health records treated differently than other medical records?",
+          "How long does it take to receive copies of requested medical records?"
+        ],
+        "responses": [
+          "It seems like you are looking for Medical Records"
+        ]       
+      },
+
+
+
+      {
+        "tag": "Personnel Records",
+        "patterns": [
+          "How can I access my employment history from previous jobs?",
+          "What documents are typically included in personnel files?",
+          "Can I request a copy of my performance evaluations from my personnel file?",
+          "Are personnel records confidential and protected?",
+          "How long are personnel records retained by employers?",
+          "Can I request personnel records for a former coworker?",
+          "What information is included in an employee's personnel file?",
+          "Can I request my personnel records if I am no longer employed by the company?",
+          "Are personnel records shared with other departments within the company?",
+          "Can I request a copy of my salary history from my personnel file?",
+          "How do I update my personal information in my personnel records?",
+          "Can I request a copy of the company's policies and procedures from my personnel file?",
+          "Are personnel records accessible to the human resources department only?",
+          "How can I request a copy of my training and certifications from my personnel file?",
+          "Can I request disciplinary records from my personnel file?",
+          "Are personnel records kept in physical or electronic format?",
+          "Can I request my personnel records if I am involved in a legal dispute with the company?",
+          "Can personnel records be used as evidence in employment-related legal cases?",
+          "How do employers ensure the privacy and security of personnel records?",
+          "Can I request personnel records from a previous employer if I have changed jobs?"
+        ],
+        "responses": [
+          "It seems like you are looking for Personnel Records"
+        ]       
+      },
+
+
+      
+      {
+        "tag": "Military Records",
+        "patterns": [
+          "How can I obtain my military service history?",
+          "What documents are required to request military discharge papers?",
+          "Can I access military service records of a family member?",
+          "How long does it take to receive military service records after making a request?",
+          "Can military service records be used for veterans' benefits claims?",
+          "How do I request a copy of my military training records?",
+          "Are military service records accessible to the public?",
+          "Can military service records be used as proof of service for employment purposes?",
+          "How can I correct errors in my military service records?",
+          "Can I request military medical records for myself or a family member?",
+          "Are there any fees associated with obtaining military service records?",
+          "How far back do military service records typically go?",
+          "Can military service records be used to trace family history or genealogy?",
+          "How do I request information about military ranks and awards?",
+          "Can military service records be used for retirement or pension claims?",
+          "Are military service records kept in physical or electronic format?",
+          "Can military service records be used in legal proceedings?",
+          "How can I obtain military service records for research purposes?",
+          "Can I request military service records from a specific branch of the military?",
+          "How do I request information about navy or army deployments or assignments?"
+        ],
+        "responses": [
+          "It seems like you are looking for Military Records"
+        ]       
+      }
+    ]
+  }
