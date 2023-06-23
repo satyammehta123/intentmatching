@@ -1,12 +1,24 @@
 # chat.py
+
+#created by Kirk Ogunrinde on Jun 23, 2023
+
+##################################################################################################
+#IMPORTS
+
+from model import *
+from train_functions import bag_of_words, tokenize
+
+#random library provides functions for generating random numbers
 import random
+
+#json library provides functions for working with JSON data
+#allows serialise (encode) python objects to JSON strings and vice-versa
 import json
 
+#torch library used for building and training neural networks
+#provides wide range of tools and functionalities for efficient numerical computing and machine learning tasks
 import torch
 
-
-from model import NeuralNet
-from train_functions import bag_of_words, tokenize
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 

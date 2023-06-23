@@ -9,7 +9,7 @@
 from model import *
 
 #json library provides functions for working with JSON data
-# Allows serialise (encode) python objects to JSON strings and vice-versa
+#allows serialise (encode) python objects to JSON strings and vice-versa
 import json
 
 #numpy library provides tools and functions for working with arrays, numerical computations and linear algrbra operations
