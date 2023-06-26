@@ -4,18 +4,19 @@
 
 This project implements a chatbot using Python and PyTorch. The chatbot is trained using intents from a JSON file and utilizes a bag-of-words approach along with a neural network model to classify user queries and provide appropriate responses.
 
-**Installation**
+**Installation:**
 
 To set up and run the project, please follow these steps:
 
 Install Python on your system.
-Install the required libraries by running the following command: pip install numpy 
+Install the required libraries by running the following command: 
+pip install numpy 
 pip install nltk
 pip install torch.
 Download the code files from the repository.
 Ensure that the intents.json file is present in the same directory as the code files.
 
-**Usage**
+**Usage:**
 
 To interact with the chatbot, follow these instructions:
 
@@ -24,7 +25,7 @@ After training, run the chat.py script.
 Enter your queries when prompted by the chatbot.
 To exit the chat, type "quit".
 
-**Data**
+**Data:**
 
 The chatbot utilizes the intents.json file to train the model. This file contains intents and associated patterns for user queries. Each intent consists of a tag and a set of patterns. Users can add new intents or patterns to the intents.json file following the provided format.
 
