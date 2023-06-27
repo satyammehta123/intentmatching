@@ -30,3 +30,11 @@ To exit the chat, type "quit".
 The chatbot utilizes the intents.json file to train the model. This file contains intents and associated patterns for user queries. Each intent consists of a tag and a set of patterns. Users can add new intents or patterns to the intents.json file following the provided format.
 
 During data preprocessing, the patterns are tokenized using NLTK's word tokenizer. The tokens are then stemmed using the Porter stemming algorithm to reduce words to their root form. A bag-of-words representation is created by mapping each token to a unique index. This representation is used as input to the neural network model for training and inference.
+
+Here's a high-level overview of how intent matching can be achieved using PyTorch:
+
+1. Data Preparation
+2. Model Defining
+3. Model Training
+4. Evaluation and Testing
+
