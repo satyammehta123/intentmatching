@@ -13,6 +13,24 @@ import numpy as np
 import nltk
 from nltk.stem.porter import PorterStemmer
 
+#fuzzywuzzy library used for string-matching and string comparison
+from fuzzywuzzy import fuzz
+
+#sentence_transformer library allows one to create and work with sentence embeddings
+#provides functionality for similarity search, clustering, classification, or transfer learning in the field of natural language processing.
+from sentence_transformers import SentenceTransformer
+
+#create an instance of the class by specifying the pre-trained model to use.
+model = SentenceTransformer('nli-mpnet-base-v2')
+
+# model = SentenceTransformer('nli-roberta-base-v2')
+# model = SentenceTransformer('princeton-nlp/sup-simcse-roberta-large')
+# model = SentenceTransformer('princeton-nlp/unsup-simcse-roberta-large')
+# model = SentenceTransformer('stsb-distilroberta-base-v2')
+# model = SentenceTransformer('stsb-mpnet-base-v2')
+# model = SentenceTransformer('stsb-roberta-bas')
+# model = SentenceTransformer('stsb-roberta-base-v2')
+# model = SentenceTransformer('stsb-roberta-large'')
 
 
 ##################################################################################################
@@ -37,27 +55,13 @@ def stem(word):
     return stemmer.stem(word.lower())
 
 
-#function that creates a bag of words representation of a sentence
-# function takes in tokenised sentence list and huge list of words and returns bag of words representation of the tokenised sentence
-def bag_of_words(tokenized_sentence, words):
-    """
-    return bag of words array:
-    1 for each known word that exists in the sentence, 0 otherwise
-    example:
-    sentence = ["hello", "how", "are", "you"]
-    words = ["hi", "hello", "I", "you", "bye", "thank", "cool"]
-    bog   = [  0 ,    1 ,    0 ,   1 ,    0 ,    0 ,      0]
-    """
-    #stem each word
-    sentence_words = [stem(word) for word in tokenized_sentence]
+#function to embed the sentences
+#function takes in a sentence, embeds it and returns it embedded
+def embedSentence(sentence):
     
-    #initialize bag with 0 for each word
-    bag = np.zeros(len(words), dtype=np.float32)
-    
-    for idx, w in enumerate(words):
-        
-        if w in sentence_words: 
-            
-            bag[idx] = 1
+    #call the encode() method of the model, which returns the corresponding sentence embeddings
+    embeddedSentence = model.encode(sentence)
 
-    return bag
+    print(len(embeddedSentence))
+
+    return embeddedSentence

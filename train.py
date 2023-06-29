@@ -7,6 +7,7 @@
 
 #from "filename" import * allows one file to access all fuctions from another file
 from model import *
+from train_functions import *
 
 #json library provides functions for working with JSON data
 #allows serialise (encode) python objects to JSON strings and vice-versa
@@ -21,12 +22,8 @@ import torch
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
 
-#nltk library allows for various text-processing functionality
-#provides various functionalities tasks such as tokenization, stemming, lemmatization, part-of-speech tagging,etc
-from train_functions import bag_of_words, tokenize, stem
-
-
-
+#
+from fuzzywuzzy import fuzz
 
 
 ##################################################################################################
@@ -92,26 +89,39 @@ intents_train = []
 
 #loop through the list of tokensXintents
 for (set_of_tokens, classification) in tokensXintents:
+
+    #call embedSentence to embed the set_of_tokens
+    temp = embedSentence(set_of_tokens)
     
-    #call bag_of_words to make a bag of words representation for each set_of_tokens
-    bag = bag_of_words(set_of_tokens, all_words)
+    #add the embedded sentence to list tokens_train
+    tokens_train.append(temp)
     
-    #add the bag of words representation of the sentence to the tokens_train list to use for training
-    tokens_train.append(bag)
+    #call embedSentence to embed the intent too
+    intent_embedding = embedSentence(classification)
     
-    #assigns class label to the variable "label" based on the intent
-    #.index() method returns the index of the first occurence of a specified value in a list
-    #PyTorch CrossEntropyLoss function expects class labels as integers, where each integer corresponds to a class
-    #does not need to be in a one-hot encoded format
-    label = intents_list.index(classification)
+    #add the embedded sentence to list intents_train
+    intents_train.append(intent_embedding)
     
-    #add the index of the intent(classification) on the list to the intents_train list
-    intents_train.append(label)
+    # #label variable assigns numeric label to each intent. label is later used as the target or ground truth during model training since machine learning algorithms typically expect class labels to be represented as integers. 
+    # #by using the label variable, you can provide the correct intent label to the model during the training process.
+    # label = intents_list.index(classification)
+    
+    # #add the index of the intent(classification) on the list to the intents_train list
+    # intents_train.append(label)
 
 #change the tokens_train and intents_train lists to numpy arrays
 #np.array() converts lists to numpy arrays
-tokens_train = np.array(tokens_train)
-intents_train = np.array(intents_train)
+
+for i in tokens_train:
+    print(i)
+    
+print()
+
+for i in intents_train:
+    print(i)
+
+tokens_train = np.array(tokens_train, dtype = object)
+intents_train = np.array(intents_train, dtype = object)
 
 
 #define hyper-parameters for training
@@ -120,25 +130,28 @@ intents_train = np.array(intents_train)
 #defines number of times the entire training dataset will be passed through model during training phase
 #rides line between improving performance and overfitting
 #monitoring the model's perormance on a validation set helps determine optimal number of epochs
-num_epochs = 1000
+num_epochs = 100
 
 #set batch_size to 8
 #determines the numnber of training samples processed in each iteration of the training loop
 #using mini-batches instead of processing the entire dataset could improve training efficiency
 #optimal batch size depends on the available computational resurces and characteristics of the dataset
 #smaller batch sizes improves stochasticiity while larger leads to smoother gradient sizes but increased memory requirements 
-batch_size = 8
+batch_size = 3
 
 #set learning_rate to 0.001
 #controls the speed the model learns at. rides lines between faster convergence and instabilty/overshooting
 learning_rate = 0.001
 
-#set the input_size to the length of the first element in tokens_train (broken words from queries) 
+#set the input_size to the length of the first element in tokens_train (broken words from queries)
 input_size = len(tokens_train[0])
+
+for i in range(len(tokens_train)):
+    print(i)
 
 #set hidden_size to 8
 #juggles the line between increasing computational requirements and risking overfitting (capacity and complexity)
-hidden_size = 8
+hidden_size = 3
 
 #set the output_size to the length of the intents list
 output_size = len(intents_list)
@@ -240,7 +253,7 @@ for epoch in range(num_epochs):
         optimizer.step()
 
     #print training progress during each batch
-    if (epoch+1) % 100 == 0:
+    if (epoch+1) % 10 == 0:
         
         #print epoch number, batch number, and corresponding loss value
         print (f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
