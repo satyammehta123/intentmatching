@@ -55,13 +55,68 @@ def stem(word):
     return stemmer.stem(word.lower())
 
 
-#function to embed the sentences
-#function takes in a sentence, embeds it and returns it embedded
-def embedSentence(sentence):
+
+#transformers fuction to perform encoding to dimensionality of 768
+def encode_sentence(sentence):
     
-    #call the encode() method of the model, which returns the corresponding sentence embeddings
-    embeddedSentence = model.encode(sentence)
+    # Encode a single sentence using the Sentence Transformers model
+    encoded = model.encode(sentence)
+        
+    return encoded
 
-    print(len(embeddedSentence))
 
-    return embeddedSentence
+
+#function to embed the sentences
+#function takes in one tokenised sentence list, encodes it and returns another list with the list encoded
+def encodeSentence(list_of_one_tokenised_sentence):
+    
+    #create return list temp
+    temp = []
+    
+    #create list of punctuations to ignore
+    ignore_words = ['?', '.', '!']
+    
+    #stem word and convert to lowercase
+    stemmer = PorterStemmer()
+
+    #for each word in the list
+    for i in list_of_one_tokenised_sentence:
+    
+        # if the word is not a punctuation, then we can go ahead and encode it
+        if i not in ignore_words:
+            
+            # stem
+            i = stemmer.stem(i)   
+            
+            # convert to lowercase
+            i = i.lower()
+            
+            # encode word
+            i = encode_sentence(i)
+            
+            # add it to the temp list
+            temp.append(i)
+            
+    return temp
+
+
+# function to embed intents
+# function takes in an intent, lowercases it and returns another list with the intent encoded
+def encodeIntents(a_list_that_holds_the_intent_text):
+    
+    # new list temp 
+    temp = []
+    
+    # for each word in intent
+    for i in a_list_that_holds_the_intent_text:
+        
+        # convert to lowercase
+        i = i.lower()
+        
+        # encode word
+        i = encode_sentence(i)
+        
+        # add to list temp
+        temp.append(i)
+        
+    return temp 

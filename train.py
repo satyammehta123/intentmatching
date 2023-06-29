@@ -22,7 +22,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
 
-#
+#fuzzywuzzy library used for string-matching and string comparison
 from fuzzywuzzy import fuzz
 
 
@@ -36,7 +36,6 @@ with open('intents.json', 'r') as file:
     intents = json.load(file)
 
 #initialise some lists 
-all_words = []
 intents_list = []
 tokensXintents = []
 
@@ -55,27 +54,8 @@ for block in intents['intents']:
         #tokenize the query
         tokens = tokenize(query)
         
-        #add all the tokens to our all_words list
-        all_words.extend(tokens)
-       
         #add a pairing of tokenised words and intent to list tokensXintents
         tokensXintents.append((tokens, intent))
-
-
-#create list of punctuations to ignore
-ignore_words = ['?', '.', '!']
-
-#stem each word if they are not a punctuation
-all_words = [stem(temp) for temp in all_words if temp not in ignore_words]
-
-#removes duplicate words and sorts the all_words list
-#set() converts lists into sets, which only stores unique elements
-#sorted() function returns a new sorted list sorted in lexicographical order
-all_words = sorted(set(all_words))
-
-#removes duplicate words and sorts the intents list
-intents_list = sorted(set(intents_list))
-
 
 
 
@@ -88,19 +68,21 @@ tokens_train = []
 intents_train = []
 
 #loop through the list of tokensXintents
-for (set_of_tokens, classification) in tokensXintents:
-
-    #call embedSentence to embed the set_of_tokens
-    temp = embedSentence(set_of_tokens)
+for (i, j) in tokensXintents:
+    
+    #call embedSentence to embed tokenised sentence list from iteration
+    temp = encodeSentence(i)
     
     #add the embedded sentence to list tokens_train
     tokens_train.append(temp)
+        
+    #call embedSentence to embed the intent from iteration too
+    temp2 = encodeIntents(j)
     
-    #call embedSentence to embed the intent too
-    intent_embedding = embedSentence(classification)
-    
+    print(len(temp2))
+        
     #add the embedded sentence to list intents_train
-    intents_train.append(intent_embedding)
+    intents_train.append(temp2)
     
     # #label variable assigns numeric label to each intent. label is later used as the target or ground truth during model training since machine learning algorithms typically expect class labels to be represented as integers. 
     # #by using the label variable, you can provide the correct intent label to the model during the training process.
@@ -109,21 +91,9 @@ for (set_of_tokens, classification) in tokensXintents:
     # #add the index of the intent(classification) on the list to the intents_train list
     # intents_train.append(label)
 
-#change the tokens_train and intents_train lists to numpy arrays
-#np.array() converts lists to numpy arrays
+exit()
 
-for i in tokens_train:
-    print(i)
-    
-print()
-
-for i in intents_train:
-    print(i)
-
-tokens_train = np.array(tokens_train, dtype = object)
-intents_train = np.array(intents_train, dtype = object)
-
-
+"""""
 #define hyper-parameters for training
 
 #set num_epochs to 1000
@@ -276,3 +246,4 @@ data = {
 FILE = "data.pth"
 torch.save(data, FILE)
 print(f'training complete. file saved to {FILE}')
+"""""
