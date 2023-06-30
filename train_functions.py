@@ -11,7 +11,7 @@ import numpy as np
 #nltk library allows for various text-processing functionality
 #provides various functionalities tasks such as tokenization, stemming, lemmatization, part-of-speech tagging,etc
 import nltk
-from nltk.stem.porter import PorterStemmer
+from nltk.stem import WordNetLemmatizer
 
 #fuzzywuzzy library used for string-matching and string comparison
 from fuzzywuzzy import fuzz
@@ -33,6 +33,10 @@ model = SentenceTransformer('nli-mpnet-base-v2')
 # model = SentenceTransformer('stsb-roberta-large'')
 
 
+
+
+
+
 ##################################################################################################
 #FUNCTION DEFINITIONS
 
@@ -42,17 +46,6 @@ def tokenize(sentence):
    
     #tokenise the sentence and returns a list of the words 
     return nltk.word_tokenize(sentence)
-
-
-#function that stems word
-#function takes in a word, stems it, and returns the lowercased and stemmed version of it
-def stem(word):
-    
-    #initialise an instance of the PorterStemmer
-    stemmer = PorterStemmer()
-    
-    #stems the word and convert it to lower case
-    return stemmer.stem(word.lower())
 
 
 
@@ -70,53 +63,28 @@ def encode_sentence(sentence):
 #function takes in one tokenised sentence list, encodes it and returns another list with the list encoded
 def encodeSentence(list_of_one_tokenised_sentence):
     
-    #create return list temp
-    temp = []
+    # Create the list of punctuations to ignore
+    ignore_words = {'?', '.', '!'}
     
-    #create list of punctuations to ignore
-    ignore_words = ['?', '.', '!']
+    # Create a new list to hold the modified words
+    modified_words = []
     
-    #stem word and convert to lowercase
-    stemmer = PorterStemmer()
-
-    #for each word in the list
+    # Create an instance of the WordNetLemmatiser
+    lemmatizer = WordNetLemmatizer()
+    
+    # Iterate over each word in the tokenized sentence
     for i in list_of_one_tokenised_sentence:
-    
-        # if the word is not a punctuation, then we can go ahead and encode it
+        
+        # If the word is not a punctuation, proceed with modifications
         if i not in ignore_words:
             
-            # stem
-            i = stemmer.stem(i)   
+            # lemmatise the word and convert it to lowercase
+            temp = lemmatizer.lemmatize(i.lower())
             
-            # convert to lowercase
-            i = i.lower()
-            
-            # encode word
-            i = encode_sentence(i)
-            
-            # add it to the temp list
-            temp.append(i)
-            
-    return temp
-
-
-# function to embed intents
-# function takes in an intent, lowercases it and returns another list with the intent encoded
-def encodeIntents(a_list_that_holds_the_intent_text):
+            # Add the modified word to the list
+            modified_words.append(temp)
     
-    # new list temp 
-    temp = []
+    # Encode the modified words using the Sentence Transformers model
+    encoded_words = [encode_sentence(word) for word in modified_words]
     
-    # for each word in intent
-    for i in a_list_that_holds_the_intent_text:
-        
-        # convert to lowercase
-        i = i.lower()
-        
-        # encode word
-        i = encode_sentence(i)
-        
-        # add to list temp
-        temp.append(i)
-        
-    return temp 
+    return encoded_words

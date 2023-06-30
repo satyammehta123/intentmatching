@@ -1,67 +1,59 @@
-#chat.py
+# chat.py
 
-#created by Kirk Ogunrinde on Jun 23, 2023
-
-##################################################################################################
-#IMPORTS
-
-from model import *
-from train_functions import bag_of_words, tokenize
-
-#random library provides functions for generating random numbers
-import random
-
-#json library provides functions for working with JSON data
-#allows serialise (encode) python objects to JSON strings and vice-versa
 import json
-
-#torch library used for building and training neural networks
-#provides wide range of tools and functionalities for efficient numerical computing and machine learning tasks
 import torch
+import torch.nn as nn
+from fuzzywuzzy import fuzz
+from train_functions import *
+from model import MyModel
 
+# Load the intents.json file
+with open('intents.json', 'r') as file:
+    intents = json.load(file)
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+intents_list = []
+tokensXintents = []
 
-with open('intents.json', 'r') as json_data:
-    intents = json.load(json_data)
+for block in intents['intents']:
+    intent = block['tag']
+    intents_list.append(intent)
+    for query in block['patterns']:
+        tokens = tokenize(query)
+        tokensXintents.append((tokens, intent))
 
-FILE = "data.pth"
-data = torch.load(FILE)
+tokens_train = []
+intents_train = []
 
-input_size = data["input_size"]
-hidden_size = data["hidden_size"]
-output_size = data["output_size"]
-all_words = data['all_words']
-tags = data['tags']
-model_state = data["model_state"]
+for (i, j) in tokensXintents:
+    temp = encodeSentence(i)
+    tokens_train.append(temp)
+    intents_train.append(j)
 
-model = NeuralNet(input_size, hidden_size, output_size).to(device)
-model.load_state_dict(model_state)
+# Load the trained model
+input_size = len(tokens_train[0])
+hidden_size = 128
+output_size = len(intents_list)
+
+model = MyModel(input_size, hidden_size, output_size)
+model.load_state_dict(torch.load('trained_model.pt'))
 model.eval()
 
-bot_name = "DOJ QUERY BOX"
-print("Enter Your Query! (type 'quit' to exit)")
+# Function to predict the intent for a query
+def predict_intent(query):
+    tokens = tokenize(query)
+    encoded_tokens = encodeSentence(tokens)
+    inputs = torch.tensor(encoded_tokens).unsqueeze(0).float()
+    outputs = model(inputs)
+    _, predicted = torch.max(outputs.data, 1)
+    intent = intents_list[predicted.item()]
+    return intent
+
+# Chat loop
+print("Welcome to the chat bot! Type 'quit' to exit.")
 while True:
-    # sentence = "do you use credit cards?"
-    sentence = input("You: ")
-    if sentence == "quit":
+    user_query = input("User: ")
+    if user_query == "quit":
+        print("Chat ended.")
         break
-
-    sentence = tokenize(sentence)
-    X = bag_of_words(sentence, all_words)
-    X = X.reshape(1, X.shape[0])
-    X = torch.from_numpy(X).to(device)
-
-    output = model(X)
-    _, predicted = torch.max(output, dim=1)
-
-    tag = tags[predicted.item()]
-
-    probs = torch.softmax(output, dim=1)
-    prob = probs[0][predicted.item()]
-    if prob.item() > 0.75:
-        for intent in intents['intents']:
-            if tag == intent["tag"]:
-                print(f"{bot_name}: {random.choice(intent['responses'])}")
-    else:
-        print(f"{bot_name}: I do not understand...")
+    intent = predict_intent(user_query)
+    print(f"Bot: Intent: {intent}")

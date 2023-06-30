@@ -21,9 +21,22 @@ import numpy as np
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
+from torch.nn.utils.rnn import pad_sequence
 
 #fuzzywuzzy library used for string-matching and string comparison
 from fuzzywuzzy import fuzz
+
+import time
+start = time.time
+
+
+
+
+
+
+
+
+
 
 
 ##################################################################################################
@@ -59,10 +72,6 @@ for block in intents['intents']:
 
 
 
-
-##################################################################################################
-#TRAINING
-
 #initialise lists for training both the tokens and the intents
 tokens_train = []
 intents_train = []
@@ -72,28 +81,22 @@ for (i, j) in tokensXintents:
     
     #call embedSentence to embed tokenised sentence list from iteration
     temp = encodeSentence(i)
-    
+        
     #add the embedded sentence to list tokens_train
     tokens_train.append(temp)
-        
-    #call embedSentence to embed the intent from iteration too
-    temp2 = encodeIntents(j)
     
-    print(len(temp2))
-        
-    #add the embedded sentence to list intents_train
-    intents_train.append(temp2)
+    #label variable assigns numeric label to each intent. label is later used as the target or ground truth during model training since machine learning algorithms typically expect class labels to be represented as integers. 
+    #by using the label variable, you can provide the correct intent label to the model during the training process.
+    label = intents_list.index(j)
     
-    # #label variable assigns numeric label to each intent. label is later used as the target or ground truth during model training since machine learning algorithms typically expect class labels to be represented as integers. 
-    # #by using the label variable, you can provide the correct intent label to the model during the training process.
-    # label = intents_list.index(classification)
-    
-    # #add the index of the intent(classification) on the list to the intents_train list
-    # intents_train.append(label)
+    #add the index of the intent(classification) on the list to the intents_train list
+    intents_train.append(label)
 
-exit()
 
-"""""
+
+
+##################################################################################################
+#TRAINING
 #define hyper-parameters for training
 
 #set num_epochs to 1000
@@ -108,142 +111,152 @@ num_epochs = 100
 #optimal batch size depends on the available computational resurces and characteristics of the dataset
 #smaller batch sizes improves stochasticiity while larger leads to smoother gradient sizes but increased memory requirements 
 batch_size = 3
-
+ 
 #set learning_rate to 0.001
 #controls the speed the model learns at. rides lines between faster convergence and instabilty/overshooting
 learning_rate = 0.001
 
-#set the input_size to the length of the first element in tokens_train (broken words from queries)
+
+# Create an instance of the model
 input_size = len(tokens_train[0])
-
-for i in range(len(tokens_train)):
-    print(i)
-
-#set hidden_size to 8
-#juggles the line between increasing computational requirements and risking overfitting (capacity and complexity)
-hidden_size = 3
-
-#set the output_size to the length of the intents list
+hidden_size = 128
 output_size = len(intents_list)
 
-#define class chatDataset that represents a dataset for training a model in conversational application
-#parameter is designed to be compatible with pytorch "Dataset" class, which is a standard class for handling datasets
-#by inheriting from Dataset, the ChatDataset class can leverage the functionalities by the base class 
-class ChatDataset(Dataset):
 
-    # define constructor method of the class and sets up initial values for its attributes
-    def __init__(self):
-        
-        #assigns number of samples in tokens_train to the n_samples attribute of the class. Represents the number of samples
-        self.n_samples = len(tokens_train)
-        
-        #assigns the tokens_train dataset to the x_data attribute of the class. Represents input data of the model
-        self.x_data = tokens_train
-        
-        #assigns intents_train dataset to the y_data attribute to the class. Represents corresponding label data for model
-        self.y_data = intents_train
+max_seq_length = max(len(seq) for seq in tokens_train)
 
-    #support indexing such that dataset[i] can be used to get i-th sample
-    def __getitem__(self, index):
-        
-        #returns the input data (x_data) and it's corresponding label (y_data) at specified data
-        return self.x_data[index], self.y_data[index]
-
-    #returns size of dataset
-    def __len__(self):
-        
-        #returns the total number of samples (n_samples) in dataset
-        return self.n_samples
+model = MyModel(input_size, hidden_size, output_size, max_seq_length)
 
 
-# create a new object of ChatDataset and assign it to variable dataset. Represents training dataset for your chat model
-dataset = ChatDataset()
+# Pad sequences to a fixed length
+padded_dataset = []
+max_seq_length = max(len(seq) for seq in tokens_train)
+for seq in tokens_train:
+    padded_seq = seq + [0] * (max_seq_length - len(seq))
+    padded_dataset.append(padded_seq)
 
-#create pytorch "dataloader" object named train_loader responsible to load the data in batches during training
-#dataset specifies the ChatDataset object
-#batch_size determines the number of samples to be included in each mini_batch during training
-#indicates whether data should be shuffled before each epoch. Shuffling allows set to be randomly ordered, reducing bias
-#specifies number of worker processes to use for data loading. 
-#num_workers= 0 means data loading will be performed in main process, without using added worker processes for parallelism
-train_loader = torch.utils.data.DataLoader(dataset=dataset, batch_size=batch_size, shuffle=True, num_workers=0)
+# Update tokens_train with padded_dataset
+tokens_train = padded_dataset
 
-#if cuda enabled GPU is available to use, else, use cpu device.
-#ensures the program utilises GPU acceleration when possible, maximising performance of the computations
-#torch.device() creates a pytorch device object with the string of the device type as an argument
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-#create an instance of the neural network with the input_size, hidden_size, and num_classes
-#Also sets the device on which the model will be located (gpu or cpu)
-model = NeuralNet(input_size, hidden_size, output_size).to(device)
+# Create the dataset and data loader
+dataset = MyDataset(tokens_train, intents_train)
 
-#nn.CrossEntropyLoss computes the negative log-likelihood loss between the predicted probabilities and the target labels
-#used during training process to calculate the loss and optimise the model paramters. 
-# loss value represents the dissimilarity between the predicted class probabilities and the target labels
+# Define the collate function for the DataLoader
+def collate_fn(batch):
+    
+    tokens_batch = [item[0] for item in batch]
+    intents_batch = [item[1] for item in batch]
+
+    # Pad the tokens to the length of the longest sequence
+    max_len = max(len(tokens) for tokens in tokens_batch)
+    padded_tokens_batch = []
+    for tokens in tokens_batch:
+        padded_tokens = tokens + [0] * (max_len - len(tokens))
+        padded_tokens_batch.append(padded_tokens)
+
+    intents_batch = torch.tensor(intents_batch)  # Convert intents to a tensor
+    return padded_tokens_batch, intents_batch
+
+
+# Create the training data loader
+dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True, collate_fn=collate_fn)
+
+
+# Define the loss function and optimizer
 criterion = nn.CrossEntropyLoss()
-
-#creates an instance of the Adam optimiser and associates it with model's parameters
-#parameters are the already-defined parameters of the model and the learning rate  
-#using adam optimiser allows model to undergo parameter updates during training, allowing efficient optimisation
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
-# Train the model
-
-#for each epoch (time the dataset is passed through the model)
-for epoch in range(num_epochs):
     
-    for (words, labels) in train_loader:
+# Training loop
+total_steps = len(dataloader)
+for epoch in range(num_epochs):
+    for i, (tokens, intents) in enumerate(dataloader):
         
-        words = words.to(device)
-        labels = labels.to(device)
+        # Forward pass
+        outputs = model(tokens)
+        loss = criterion(outputs, intents)
 
-        #perform forward pass of model on the current batch of sentences and obtains predicted outputs
-        outputs = model(words)
-        
-        #calculate loss value based on predicted outputs and target intents
-        #criterion is instance of nn.CrossEntropyLoss() function 
-        #function combines softmax function and negative log-likelihood loss calculation
-        loss = criterion(outputs, labels)
-
-        #zero out (set = 0)the gradients of the model parameters before the backward pass and parameter update
-        #gradients need to be updated based on the loss value back propagation
-        #ensures gradients are fresh and not influenced by any previous computations
+        # Backward and optimize
         optimizer.zero_grad()
-        
-        
-        #loads the optimiser state as dict
-        # dictState = optimizer.state.dict()
-        
-        #perform backward pass of the model (computes gradients of the model parameters with respect to loss value)
-        #in training process, the goal is to minimise the loss function by adjusting the model parameters
-        #the backward pass enables the neural network to learn from the training data and improve performance over passes 
         loss.backward()
-        
-        #optimiser.step() updates the model parameters based on the gradients computed suring the backward pass
-        #updates the parameters of the model in the direction that reduces the loss function
         optimizer.step()
 
-    #print training progress during each batch
-    if (epoch+1) % 10 == 0:
-        
-        #print epoch number, batch number, and corresponding loss value
-        print (f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
+        if (i + 1) % 10 == 0:
+            print(f"Epoch [{epoch+1}/{num_epochs}], Step [{i+1}/{total_steps}], Loss: {loss.item():.4f}")
+
+print("Training finished.")
+
+# Save the trained model
+torch.save(model.state_dict(), 'trained_model.pt')
+
+print("Trained model saved.")
 
 
-# print the final loss
-print(f'final loss: {loss.item():.4f}')
 
-#
-data = {
-"model_state": model.state_dict(),
-"input_size": input_size,
-"hidden_size": hidden_size,
-"output_size": output_size,
-"all_words": all_words,
-"tags": intents_list
-}
 
-#save trained model file as data.pth
-FILE = "data.pth"
-torch.save(data, FILE)
-print(f'training complete. file saved to {FILE}')
-"""""
+
+
+##################################################################################################
+# VALIDATION
+
+# Load the intents2.json file for validation
+with open('intents2.json', 'r') as file:
+    intents2 = json.load(file)
+
+tokensXintents2 = []
+
+for block in intents2['intents']:
+    intent = block['tag']
+    for query in block['patterns']:
+        tokens = tokenize(query)
+        tokensXintents2.append((tokens, intent))
+
+tokens_validate = []
+intents_validate = []
+
+for (i, j) in tokensXintents2:
+    temp = encodeSentence(i)
+    tokens_validate.append(temp)
+    intents_validate.append(j)
+
+# Create the validation dataset and data loader
+validation_dataset = MyDataset(tokens_validate, intents_validate)
+
+# 
+print("validation")
+
+# Define the collate function for the validation DataLoader
+def collate_fn(batch):
+    tokens_batch = [item[0] for item in batch]
+    intents_batch = [item[1] for item in batch]
+
+    # Pad the tokens to the length of the longest sequence
+    max_len = max(len(tokens) for tokens in tokens_batch)
+    padded_tokens_batch = []
+    for tokens in tokens_batch:
+        padded_tokens = tokens + [0] * (max_len - len(tokens))
+        padded_tokens_batch.append(padded_tokens)
+
+    intents_batch = torch.tensor(intents_batch)  # Convert intents to a tensor
+    return padded_tokens_batch, intents_batch
+
+# Create the validation data loader
+validation_dataloader = DataLoader(validation_dataset, batch_size=1, collate_fn=collate_fn)
+
+# Create the DataLoader
+dataloader = DataLoader(dataset, batch_size=32, shuffle=True, collate_fn=collate_fn)
+
+# Evaluate the model using the DataLoader
+correct = 0
+total = 0
+
+with torch.no_grad():
+    for tokens, intents in dataloader:
+        outputs = model(tokens)
+        _, predicted = torch.max(outputs, dim=1)
+        total += intents.size(0)
+        correct += (predicted == intents).sum().item()
+
+accuracy = correct / total
+print('Accuracy: {:.2%}'.format(accuracy))

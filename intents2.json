@@ -1,0 +1,122 @@
+{
+    "intents": [
+      {
+        "tag": "Immigration Records",
+        "patterns": [
+          "Can immigration documents be used to determine eligibility for government benefits?",
+          "How can I access immigration records for someone who has passed away?",
+          "Can I request immigration records for someone who was deported?",
+          "Are immigration records kept by the government or individual immigration agencies?",
+          "Can immigration records be accessed by employers or background check agencies?",
+          "How can I request immigration records for someone who was detained at the border?",
+          "Can immigration records be used to verify employment eligibility?",
+          "What should I do if I believe there is an error in my immigration records?",
+          "Can immigration records be used to prove residency for college applications?",
+          "How can I access immigration records for someone who entered the country illegally?"
+        ],
+        "response": [
+          "It seems like you are looking for Immigration Records."
+        ]
+      },
+      {
+        "tag": "Travel Records",
+        "patterns": [
+          "Can I access my travel records if I have lost my passport?",
+          "Are there any restrictions on accessing travel records for national security reasons?",
+          "How can I access my travel records if I traveled using multiple airlines?",
+          "Can I request travel records for trips taken by someone else with their permission?",
+          "What should I do if I suspect my travel records have been compromised or stolen?",
+          "Can travel records be used as proof of residence for driver's license applications?",
+          "How can I access my travel records for trips taken by land or sea?",
+          "Can I request travel records for trips taken within a specific timeframe or location?",
+          "Are there any online platforms or government databases where I can access my travel records?",
+          "Can travel records be used to verify eligibility for travel insurance claims?"
+        ],
+        "response": [
+          "It seems like you are looking for Travel Records."
+        ]
+      },
+      {
+        "tag": "IRS Records",
+        "patterns": [
+          "Can I request tax records for someone who is deceased?",
+          "How can I access my tax records if I filed taxes jointly with my spouse?",
+          "Are there any restrictions on accessing IRS records for tax fraud investigations?",
+          "Can I request a copy of my tax return from a previous tax preparer?",
+          "How can I access tax records if I have recently become a U.S. citizen?",
+          "Can I obtain IRS records for a specific tax deduction or credit?",
+          "What should I do if I suspect that my tax records have been compromised or accessed without authorization?",
+          "Can IRS records be used to verify income for mortgage or loan applications?",
+          "How can I access my tax records if I have forgotten my IRS account login information?",
+          "Can I request a transcript of my tax records for educational or financial aid purposes?"
+        ],
+        "response": [
+          "It seems like you are looking for IRS Records."
+        ]
+      },
+      {
+        "tag": "Medical Records",
+        "patterns": [
+          "Can I request medical records for a minor child as their legal guardian?",
+          "How can I access my mental health records from a specific healthcare provider?",
+          "Are medical records shared between different healthcare providers within the same hospital network?",
+          "Can I obtain medical records for a specific diagnosis or medical condition?",
+          "What steps should I take if I believe there are errors in my medical records?",
+          "Can medical records be used to determine eligibility for disability benefits?",
+          "How can I access medical records for medical research studies or clinical trials?",
+          "Can I request medical records from a previous healthcare provider outside of the United States?",
+          "What should I do if I am denied access to my medical records by a healthcare provider?",
+          "Can medical records be used as evidence in a legal case or court proceedings?"
+        ],
+        "response": [
+          "It seems like you are looking for Medical Records."
+        ]
+      },
+      {
+        "tag": "Personnel Records",
+        "patterns": [
+          "Can I access personnel records for someone who used to work for a specific company?",
+          "How can I obtain my personnel records from a previous employer?",
+          "Are personnel records accessible by current employees within a company?",
+          "Can I request personnel records for an employment verification process?",
+          "What information is typically included in personnel records?",
+          "Can personnel records be used to verify employment history for job applications?",
+          "How can I access personnel records if I am a government employee?",
+          "Can I request personnel records for a deceased individual who used to work for a government agency?",
+          "What should I do if I believe there are inaccuracies in my personnel records?",
+          "Can personnel records be used as evidence in an employment dispute or legal case?"
+        ],
+        "response": [
+          "It seems like you are looking for Personnel Records."
+        ]
+      },
+        {
+          "tag": "Military Records",
+          "patterns": [
+            "How can I request military records for a deceased veteran?",
+            "What information is typically included in military service records?",
+            "Can I obtain military records for someone who is still alive?",
+            "How long does it usually take to receive military records?",
+            "Are military records confidential?",
+            "Can military records be used for genealogical research?",
+            "What is the process for requesting military records?",
+            "Can I access military records of family members who served in the past?",
+            "What if the military records I am looking for are lost or destroyed?",
+            "Are there any restrictions on accessing certain military records?",
+            "Can military records be used for veterans' benefits claims?",
+            "How far back do military records typically go?",
+            "What should I do if I find errors in my military records?",
+            "Can military records be used for educational purposes?",
+            "Are military records available for personnel who served in non-combat roles?",
+            "Can military records be used for legal proceedings?",
+            "How can I obtain military records for a historical research project?",
+            "Are there fees associated with requesting military records?",
+            "Can military records be released to the public?",
+            "What is the National Personnel Records Center?"
+          ],
+          "response": [
+            "It seems like you are looking for Military Records"
+          ]       
+        }
+      ]
+}
