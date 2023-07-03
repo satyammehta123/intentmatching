@@ -25,7 +25,7 @@ with open('intents.json', 'r') as file:
     intents_train = json.load(file)
 
 print()
-print("...just loaded the traiing dataset from the intents.json file")
+print("...just loaded the training dataset from the intents.json file")
 print()
 
 
