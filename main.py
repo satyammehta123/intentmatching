@@ -7,11 +7,9 @@
 #IMPORTS
 from main_functions import preprocess_sentence
 
-import torch
 import json
 import numpy as np
 from keras.models import Sequential
-from keras.layers import Dropout
 from keras.layers import Dense, Embedding, LSTM
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
@@ -95,18 +93,10 @@ print()
 
 
 ##################################################################################################
-<<<<<<< HEAD
 #model definition
 # Model definition
-=======
-# model definition
->>>>>>> 4b6913c3d11f8da7adc48d6bdc0244993b2c28e4
 model = Sequential()
-
-# model = functionalAPI()
-# model = subclassingModel()
 model.add(Embedding(total_words, 32, input_length=max_sequence_length))
-<<<<<<< HEAD
 model.add(LSTM(128))
 model.add(Dropout(0.2))
 model.add(Dense(len(set(intents_list_train)), activation='softmax'))
@@ -118,13 +108,6 @@ learning_rate = 0.001
 optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 
-=======
-model.add(LSTM(64))
-model.add(Dropout(0.2)) 
-model.add(Dense(len(set(intents_list_train)), activation='softmax'))
-
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
->>>>>>> 4b6913c3d11f8da7adc48d6bdc0244993b2c28e4
 
 # Model training
 history = model.fit(X_train, y_train, epochs=50, validation_data=(X_val, y_val))
@@ -144,12 +127,7 @@ print()
 
 FILE = "data.pth"
 torch.save(model, FILE)
-<<<<<<< HEAD
 print(f'training complete. file saved')
-=======
-print(f'training complete. file saved to {FILE}')
-
->>>>>>> 4b6913c3d11f8da7adc48d6bdc0244993b2c28e4
 
 
 
@@ -160,6 +138,12 @@ print(f'training complete. file saved to {FILE}')
 
 
 
+
+
+
+
+##################################################################################################
+# VALIDATION
 
 
 
@@ -239,26 +223,17 @@ while True:
     if user_input.lower() == 'exit':
         break
 
-    #tokenize and pad user input
+    # Tokenize and pad user input
     user_sequence = tokenizer.texts_to_sequences([user_input])
     user_padded_sequence = pad_sequences(user_sequence, maxlen=max_sequence_length)
 
-    #get prediction
+    # Get prediction
     prediction = model.predict(user_padded_sequence)[0]
-    
-    #sort indices in descending order
-    sorted_indices = np.argsort(prediction)[::-1] 
+    sorted_indices = np.argsort(prediction)[::-1]  # Sort indices in descending order
 
-    #print intents and probabilities
+    # Print intents and probabilities
     print('Predicted Intents:')
     for i in sorted_indices:
         intent = unique_intents[i]
         probability = prediction[i] * 100
         print('- {}: {:.2f}%'.format(intent, probability))
-
-
-
-
-# more/ better data
-# change hyperparameters
-# find another model
