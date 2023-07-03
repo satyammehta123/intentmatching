@@ -94,12 +94,16 @@ print()
 
 
 ##################################################################################################
-#model definition
+# model definition
 model = Sequential()
+
+# model = functionalAPI()
+# model = subclassingModel()
 model.add(Embedding(total_words, 32, input_length=max_sequence_length))
 model.add(LSTM(64))
 model.add(Dropout(0.2)) 
 model.add(Dense(len(set(intents_list_train)), activation='softmax'))
+
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 # Model training
