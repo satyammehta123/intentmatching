@@ -16,7 +16,6 @@ The next layer is an LSTM (Long Short-Term Memory) layer.
 LSTM is a type of recurrent neural network (RNN) layer that is well-suited for sequence processing tasks.
 The LSTM layer processes the input sequence and learns to capture long-term dependencies and temporal patterns.
 It uses the 64 parameter to specify the number of hidden units (also known as the LSTM cell size).
-Dense Layer:
 
 3. Dense Layer with SoftMax Activation Function
 The Dense layer maps the LSTM layer's output to the number of intents present in the training data.

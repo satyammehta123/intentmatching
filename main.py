@@ -17,6 +17,8 @@ from sklearn.model_selection import train_test_split
 from keras.layers import Dense, Embedding, LSTM, Dropout
 import tensorflow as tf
 import torch
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
 
 ##################################################################################################
 #load training dataset from JSON file
@@ -98,7 +100,7 @@ print()
 model = Sequential()
 model.add(Embedding(total_words, 32, input_length=max_sequence_length))
 model.add(LSTM(128))
-model.add(Dropout(0.2))
+model.add(Dropout(0.4))
 model.add(Dense(len(set(intents_list_train)), activation='softmax'))
 
 # Adjust the learning rate
