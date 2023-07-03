@@ -1,8 +1,6 @@
 
 #created by Kirk Ogunrinde on July 3rd, 2023
 
-
-
 ##################################################################################################
 #IMPORTS
 from nltk.corpus import stopwords
