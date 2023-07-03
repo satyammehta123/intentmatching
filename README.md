@@ -2,39 +2,31 @@
 
 **Description:** 
 
-This project implements a chatbot using Python and PyTorch. The chatbot is trained using intents from a JSON file and utilizes a bag-of-words approach along with a neural network model to classify user queries and provide appropriate responses.
+This repository contains code for intent classification using deep learning techniques in the field of natural language processing (NLP). The goal of this project is to develop a model that can accurately classify user queries into specific intents, enabling intelligent systems to understand and respond appropriately to user inputs.  In this project, we leverage the power of Keras, a popular deep learning library, to build a sequential model that can effectively learn and predict intents based on input queries.
 
 **Installation:**
 
-To set up and run the project, please follow these steps:
+To run the code in this repository, you need the following dependencies:
 
-Install Python on your system.
-Install the required libraries by running the following command: 
-pip install numpy 
-pip install nltk
-pip install torch.
-Download the code files from the repository.
-Ensure that the intents.json file is present in the same directory as the code files.
+Python (3.6 or higher)
+NLTK (Natural Language Toolkit)
+Keras (2.4.3 or higher)
+TensorFlow (2.4.1 or higher)
+PyTorch (1.7.0 or higher)
 
 **Usage:**
 
 To interact with the chatbot, follow these instructions:
 
-Run the train.py script to train the chatbot model using the intents from the intents.json file.
-After training, run the chat.py script.
+Run the main.py script to train the chatbot model using the intents from the intents.json file.
 Enter your queries when prompted by the chatbot.
 To exit the chat, type "quit".
 
-**Data:**
+**Approach:**
+Preprocessing: We begin by preprocessing the training data. This includes removing stopwords, lemmatizing words, and tokenizing sentences. The preprocessing step enhances the quality of the training data and improves the model's ability to learn meaningful representations.
 
-The chatbot utilizes the intents.json file to train the model. This file contains intents and associated patterns for user queries. Each intent consists of a tag and a set of patterns. Users can add new intents or patterns to the intents.json file following the provided format.
+Model Architecture: We construct a sequential model using Keras. The model consists of an embedding layer, an LSTM layer, a dropout layer, and a dense layer. Dropout regularizes the model to prevent overfitting, and the dense layer produces the final output probabilities for each intent category.
 
-During data preprocessing, the patterns are tokenized using NLTK's word tokenizer. The tokens are then stemmed using the Porter stemming algorithm to reduce words to their root form. A bag-of-words representation is created by mapping each token to a unique index. This representation is used as input to the neural network model for training and inference.
+Evaluation: We evaluate the trained model on a validation dataset, computing metrics such as accuracy and loss. This assessment allows us to measure the model's performance and validate its ability to correctly predict intents for unseen data.
 
-Here's a high-level overview of how intent matching can be achieved using PyTorch:
-
-1. Data Preparation
-2. Model Defining
-3. Model Training
-4. Evaluation and Testing
-
+Prediction: With the trained model, we can make intent predictions for user queries. By inputting a query, the model predicts the most likely intent category, enabling intelligent systems to understand and respond accordingly.
