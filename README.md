@@ -2,9 +2,7 @@
 
 **Description:** 
 
-<<<<<<< HEAD
 This repository contains code for intent classification using deep learning techniques in the field of natural language processing (NLP). The goal of this project is to develop a model that can accurately classify user queries into specific intents, enabling intelligent systems to understand and respond appropriately to user inputs.  In this project, we leverage the power of Keras, a popular deep learning library, to build a sequential model that can effectively learn and predict intents based on input queries.
-=======
 This project uses a sequential model implemented using the Keras library. Here's an explanation of the model architecture:
 
 1. Embedding Layer
@@ -50,30 +48,20 @@ The user's input is tokenized, padded, and passed to the model's predict() metho
 The model outputs probabilities for each intent.
 The predicted intents are sorted in descending order of probabilities, and the top intents are displayed to the user.
 
->>>>>>> 4b6913c3d11f8da7adc48d6bdc0244993b2c28e4
 
 **Installation:**
 
 To run the code in this repository, you need the following dependencies:
 
-<<<<<<< HEAD
-Python (3.6 or higher)
-NLTK (Natural Language Toolkit)
-Keras (2.4.3 or higher)
-TensorFlow (2.4.1 or higher)
-PyTorch (1.7.0 or higher)
-=======
 Install Python on your system.
 Install the required libraries by running the appropriate commands 
 Download the code files from the repository.
 Ensure that the intents.json file is present in the same directory as the code files.
 Run the train.py file.
->>>>>>> 4b6913c3d11f8da7adc48d6bdc0244993b2c28e4
 
 
 **Test**
 
-<<<<<<< HEAD
 Run the main.py script to train the chatbot model using the intents from the intents.json file.
 Enter your queries when prompted by the chatbot.
 To exit the chat, type "quit".
@@ -84,7 +72,6 @@ Preprocessing: We begin by preprocessing the training data. This includes removi
 Model Architecture: We construct a sequential model using Keras. The model consists of an embedding layer, an LSTM layer, a dropout layer, and a dense layer. Dropout regularizes the model to prevent overfitting, and the dense layer produces the final output probabilities for each intent category.
 
 Evaluation: We evaluate the trained model on a validation dataset, computing metrics such as accuracy and loss. This assessment allows us to measure the model's performance and validate its ability to correctly predict intents for unseen data.
-=======
 1. What information is typically included in immigration records?
 2. Are there any restrictions on accessing historical travel information?
 3. I need to request a tax transcript from the IRS. What are the available methods for obtaining it?
@@ -92,6 +79,5 @@ Evaluation: We evaluate the trained model on a validation dataset, computing met
 5. Can I request disciplinary records from my personnel file?
 6. Can you provide information on the organizational structure and chain of command of the U.S. Army?
 
->>>>>>> 4b6913c3d11f8da7adc48d6bdc0244993b2c28e4
 
 Prediction: With the trained model, we can make intent predictions for user queries. By inputting a query, the model predicts the most likely intent category, enabling intelligent systems to understand and respond accordingly.
