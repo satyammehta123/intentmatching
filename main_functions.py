@@ -7,6 +7,8 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 
+from fuzzywuzzy import fuzz
+
 
 
 ##################################################################################################
@@ -28,5 +30,13 @@ def preprocess_sentence(sentence):
     #lemmatise tokens
     lemmatized_tokens = [lemmatizer.lemmatize(token) for token in filtered_tokens]
     
+    # #
+    
+    # temp = []
+    # for i in lemmatized_tokens:
+    #     if fuzz.ratio(i) > 70:         
+    #         temp.append(i)
+    
+        
     #return the lemmatised tokens with spaces to resemble normal sentences 
     return ' '.join(lemmatized_tokens)
