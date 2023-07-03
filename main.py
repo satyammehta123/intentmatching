@@ -20,6 +20,7 @@ import torch
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 
+
 ##################################################################################################
 #load training dataset from JSON file
 with open('intents.json', 'r') as file:
@@ -112,7 +113,7 @@ model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['ac
 
 
 # Model training
-history = model.fit(X_train, y_train, epochs=50, validation_data=(X_val, y_val))
+history = model.fit(X_train, y_train, epochs=20, validation_data=(X_val, y_val))
 
 # Compute precision and loss on the validation set
 _, accuracy = model.evaluate(X_val, y_val)
@@ -218,8 +219,19 @@ print()
 
 
 
+
+
+
+
+
 ##################################################################################################
 # Validation on user input
+
+
+# Load the saved model
+# model = tf.keras.models.load_model('Default (92%).pth')
+
+
 while True:
     user_input = input('Enter a query (or enter "exit" to quit): ')
     if user_input.lower() == 'exit':
