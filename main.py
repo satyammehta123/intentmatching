@@ -7,9 +7,11 @@
 #IMPORTS
 from main_functions import preprocess_sentence
 
+import torch
 import json
 import numpy as np
 from keras.models import Sequential
+from keras.layers import Dropout
 from keras.layers import Dense, Embedding, LSTM
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
@@ -96,11 +98,12 @@ print()
 model = Sequential()
 model.add(Embedding(total_words, 32, input_length=max_sequence_length))
 model.add(LSTM(64))
+model.add(Dropout(0.2)) 
 model.add(Dense(len(set(intents_list_train)), activation='softmax'))
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 # Model training
-history = model.fit(X_train, y_train, epochs=10, validation_data=(X_val, y_val))
+history = model.fit(X_train, y_train, epochs=50, validation_data=(X_val, y_val))
 
 # Compute precision and loss on the validation set
 _, accuracy = model.evaluate(X_val, y_val)
@@ -115,6 +118,9 @@ precision = sum([1 for pred, true in zip(predicted_intents, true_intents) if pre
 print('Precision: {:.2f}%'.format(precision * 100))
 print()
 
+FILE = "data.pth"
+torch.save(model, FILE)
+print(f'training complete. file saved to {FILE}')
 
 
 
@@ -126,12 +132,6 @@ print()
 
 
 
-
-
-
-
-##################################################################################################
-# VALIDATION
 
 
 
@@ -211,17 +211,26 @@ while True:
     if user_input.lower() == 'exit':
         break
 
-    # Tokenize and pad user input
+    #tokenize and pad user input
     user_sequence = tokenizer.texts_to_sequences([user_input])
     user_padded_sequence = pad_sequences(user_sequence, maxlen=max_sequence_length)
 
-    # Get prediction
+    #get prediction
     prediction = model.predict(user_padded_sequence)[0]
-    sorted_indices = np.argsort(prediction)[::-1]  # Sort indices in descending order
+    
+    #sort indices in descending order
+    sorted_indices = np.argsort(prediction)[::-1] 
 
-    # Print intents and probabilities
+    #print intents and probabilities
     print('Predicted Intents:')
     for i in sorted_indices:
         intent = unique_intents[i]
         probability = prediction[i] * 100
         print('- {}: {:.2f}%'.format(intent, probability))
+
+
+
+
+# more/ better data
+# change hyperparameters
+# find another model
