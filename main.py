@@ -24,7 +24,7 @@ with open('intents.json', 'r') as file:
     intents_train = json.load(file)
 
 print()
-print("...just loaded the traiing dataset from the intents.json file")
+print("...just loaded the training dataset from the intents.json file")
 print()
 
 
@@ -83,7 +83,7 @@ for i, intent in enumerate(intents_list_train):
     labels[i, unique_intents.index(intent)] = 1
 
 #split data into training and validation sets
-X_train, X_val, y_train, y_val = train_test_split(padded_sequences, labels, test_size=0.2, random_state=42)
+X_train, X_val, y_train, y_val = train_test_split(padded_sequences, labels, test_size=0.7, random_state=42)
 
 
 print()
@@ -98,7 +98,7 @@ model = Sequential()
 model.add(Embedding(total_words, 64, input_length=max_sequence_length))
 model.add(LSTM(64))
 model.add(Dropout(0.3))
-model.add(Dense(len(set(intents_list_train)), activation='softmax'))
+model.add(Dense(len(set(unique_intents)), activation='softmax'))
 
 # Adjust the learning rate
 learning_rate = 0.001
@@ -114,34 +114,41 @@ if train_model.lower() == 'y':
     
     ##################################################################################################
     #model training
-    history = model.fit(X_train, y_train, epochs=50, validation_data=(X_val, y_val))
+    # Train the model on the full training set
+    history = model.fit(X_train, y_train, epochs=100, validation_data=(X_val, y_val))
 
-    # Compute precision and loss on the validation set
-    _, accuracy = model.evaluate(X_val, y_val)
-    print('Training Set Validation Accuracy: {:.2f}%'.format(accuracy * 100))
+    # Compute precision and loss on the full dataset
+    _, accuracy = model.evaluate(X_train, y_train)
+    print('Training Set Accuracy: {:.2f}%'.format(accuracy * 100))
 
     predictions = model.predict(X_val)
-    predicted_intents = [intents_list_train[np.argmax(pred)] for pred in predictions]
-    true_intents = [intents_list_train[np.argmax(label)] for label in y_val]
+    predicted_intents = [unique_intents[np.argmax(pred)] for pred in predictions]
+    true_intents = [unique_intents[np.argmax(label)] for label in y_val]
+
+    
+    # Print predicted intents and true intents side by side
+    for predicted, true in zip(predicted_intents, true_intents):
+        print("Predicted: ", predicted, "True: ", true)
+
     
     # Calculate precision
     precision = sum([1 for pred, true in zip(predicted_intents, true_intents) if pred == true]) / len(predicted_intents)
     print('Precision: {:.2f}%'.format(precision * 100))
     print()
 
-    # Save the trained model
-    model.save('trained_model.h5')
-    print("Trained model saved as 'trained_model.h5'.")
+    # # Save the trained model
+    # model.save('trained_model.h5')
+    # print("Trained model saved as 'trained_model.h5'.")
+       
+    # Convert the .h5 model to SavedModel format
+    tf.saved_model.save(model, 'saved_model')
+
+    print("Trained model saved as 'saved_model'.")
     
-       
-       
-       
-       
-       
-       
-       
     
-        
+    
+    
+    
     ##################################################################################################
     # VALIDATION
 
@@ -245,16 +252,29 @@ if train_model.lower() == 'y':
     
 else:
     
+    # load_model_file = input("Enter the filename of the pre-trained model: ")
+    # load_model_path = os.path.join(os.getcwd(), load_model_file)
+
+    # if os.path.isfile(load_model_path):
+    #     model = load_model(load_model_path)
+    #     print("Pre-trained model loaded from '{}'.".format(load_model_path))
+        
+    # else:
+    #     print("File '{}' does not exist. Please provide a valid filename.".format(load_model_file))
+    #     exit()   
+    
+    
     load_model_file = input("Enter the filename of the pre-trained model: ")
     load_model_path = os.path.join(os.getcwd(), load_model_file)
 
-    if os.path.isfile(load_model_path):
-        model = load_model(load_model_path)
+    if os.path.isdir(load_model_path):
+        model = tf.saved_model.load(load_model_path)
         print("Pre-trained model loaded from '{}'.".format(load_model_path))
-        
+
     else:
-        print("File '{}' does not exist. Please provide a valid filename.".format(load_model_file))
-        exit()   
+        print("Directory '{}' does not exist. Please provide a valid directory containing the SavedModel.".format(load_model_file))
+        exit()
+
 
     ##################################################################################################
     # Validation on user input
@@ -273,7 +293,7 @@ else:
         prediction = model.predict(user_padded_sequence)[0]
         sorted_indices = np.argsort(prediction)[::-1]  # Sort indices in descending order
 
-        # Print intents and probabilities
+        # Print intents and probabilities 
         print('Predicted Intents:')
         for i in sorted_indices:
             intent = unique_intents[i]
