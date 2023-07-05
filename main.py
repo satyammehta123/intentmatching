@@ -16,11 +16,9 @@ from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
-import torch
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 import streamlit as st
-
 from PIL import Image
 
 ##################################################################################################
