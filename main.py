@@ -13,7 +13,7 @@ import numpy as np
 from keras.models import Sequential, load_model
 from keras.layers import Dense, Embedding, LSTM, Dropout
 from keras.preprocessing.text import Tokenizer
-from keras.preprocessing.sequence import pad_sequences
+from keras_preprocessing.sequence import pad_sequences
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
 
