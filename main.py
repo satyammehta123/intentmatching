@@ -11,11 +11,10 @@ import os
 import json
 import numpy as np
 from keras.models import Sequential, load_model
-from keras.layers import Dense, Embedding, LSTM
+from keras.layers import Dense, Embedding, LSTM, Dropout
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 from sklearn.model_selection import train_test_split
-from keras.layers import Dense, Embedding, LSTM, Dropout
 import tensorflow as tf
 import torch
 from fuzzywuzzy import fuzz
