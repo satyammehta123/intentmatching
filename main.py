@@ -7,9 +7,10 @@
 #IMPORTS
 from main_functions import preprocess_sentence
 
+import os
 import json
 import numpy as np
-from keras.models import Sequential
+from keras.models import Sequential, load_model
 from keras.layers import Dense, Embedding, LSTM
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
@@ -97,11 +98,10 @@ print()
 
 ##################################################################################################
 #model definition
-# Model definition
 model = Sequential()
-model.add(Embedding(total_words, 32, input_length=max_sequence_length))
-model.add(LSTM(128))
-model.add(Dropout(0.4))
+model.add(Embedding(total_words, 64, input_length=max_sequence_length))
+model.add(LSTM(64))
+model.add(Dropout(0.3))
 model.add(Dense(len(set(intents_list_train)), activation='softmax'))
 
 # Adjust the learning rate
@@ -111,111 +111,127 @@ learning_rate = 0.001
 optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 
+train_model = input("Do you want to train a new model? (y/n): ")
 
-# Model training
-history = model.fit(X_train, y_train, epochs=20, validation_data=(X_val, y_val))
-
-# Compute precision and loss on the validation set
-_, accuracy = model.evaluate(X_val, y_val)
-print('Validation Accuracy: {:.2f}%'.format(accuracy * 100))
-
-predictions = model.predict(X_val)
-predicted_intents = [intents_list_train[np.argmax(pred)] for pred in predictions]
-true_intents = [intents_list_train[np.argmax(label)] for label in y_val]
-
-# Calculate precision
-precision = sum([1 for pred, true in zip(predicted_intents, true_intents) if pred == true]) / len(predicted_intents)
-print('Precision: {:.2f}%'.format(precision * 100))
-print()
-
-FILE = "data.pth"
-torch.save(model, FILE)
-print(f'training complete. file saved')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-##################################################################################################
-# VALIDATION
-
-
-
-##################################################################################################
-#load training dataset from JSON file
-with open('intents2.json', 'r') as file:
-    intents_valid = json.load(file)
-
-print()
-print("...just loaded the validation dataset from the intents2.json file")
-print()
-
-
-
-##################################################################################################
-#preprocess validation data
-val_intents = []
-val_sentences = []
-
-#looop through the intent.json file
-for block in intents_valid['intents']:
+if train_model.lower() == 'y':
     
-    #temp equals the intent (IRS Records, Medical Records, etc.)
-    temp = block['tag']
+    # Model training
+    history = model.fit(X_train, y_train, epochs=50, validation_data=(X_val, y_val))
+
+    # Compute precision and loss on the validation set
+    _, accuracy = model.evaluate(X_val, y_val)
+    print('Validation Accuracy: {:.2f}%'.format(accuracy * 100))
+
+    predictions = model.predict(X_val)
+    predicted_intents = [intents_list_train[np.argmax(pred)] for pred in predictions]
+    true_intents = [intents_list_train[np.argmax(label)] for label in y_val]
+
+    # Calculate precision
+    precision = sum([1 for pred, true in zip(predicted_intents, true_intents) if pred == true]) / len(predicted_intents)
+    print('Precision: {:.2f}%'.format(precision * 100))
+    print()
+
+    # Save the trained model
+    model.save('trained_model.h5')
+    print("Trained model saved as 'trained_model.h5'.")
     
-    #add each sentence to the sentences_list_train and add its intent to the intents_list_train so we can have parallel lists
-    for query in block['patterns']:
-        val_sentences.append(query)
-        val_intents.append(temp)
-
-#preprocess each sentence (remove stopwords, lemmatise, tokenise)
-preprocessed_sentences_valid = []
-for sentence in val_sentences:
-    preprocessed_sentences_valid.append(preprocess_sentence(sentence))
-
-
-print()
-print("...just finished preprocessing the validation sentences")
-print()
+       
+       
+       
+       
+       
+       
+       
+    
+        
+    ##################################################################################################
+    # VALIDATION
 
 
 
+    ##################################################################################################
+    #load training dataset from JSON file
+    with open('intents2.json', 'r') as file:
+        intents_valid = json.load(file)
 
-##################################################################################################
-# tokenize and pad validation sentences
-val_sequences = tokenizer.texts_to_sequences(val_sentences)
-val_padded_sequences = pad_sequences(val_sequences, maxlen=max_sequence_length)
-
-# Convert validation intents to one-hot encodings
-val_unique_intents = list(set(val_intents))
-
-# Convert validation intents to one-hot encodings
-val_labels = np.zeros((len(val_sentences), len(val_unique_intents)))
-for i, intent in enumerate(val_intents):
-    val_labels[i, val_unique_intents.index(intent)] = 1
-
-
-print()
-print("...just finished converting the validation intents into one-hot encodings and padding")
-print()
+    print()
+    print("...just loaded the validation dataset from the intents2.json file")
+    print()
 
 
 
-##################################################################################################
-#compute accuracy and loss on the validation set
-val_loss, val_accuracy = model.evaluate(val_padded_sequences, val_labels)
-print('Validation Accuracy: {:.2f}%'.format(val_accuracy * 100))
-print('Validation Loss:', val_loss)
-print()
+    ##################################################################################################
+    #preprocess validation data
+    val_intents = []
+    val_sentences = []
+
+    #looop through the intent.json file
+    for block in intents_valid['intents']:
+        
+        #temp equals the intent (IRS Records, Medical Records, etc.)
+        temp = block['tag']
+        
+        #add each sentence to the sentences_list_train and add its intent to the intents_list_train so we can have parallel lists
+        for query in block['patterns']:
+            val_sentences.append(query)
+            val_intents.append(temp)
+
+    #preprocess each sentence (remove stopwords, lemmatise, tokenise)
+    preprocessed_sentences_valid = []
+    for sentence in val_sentences:
+        preprocessed_sentences_valid.append(preprocess_sentence(sentence))
+
+
+    print()
+    print("...just finished preprocessing the validation sentences")
+    print()
+
+
+
+
+    ##################################################################################################
+    # tokenize and pad validation sentences
+    val_sequences = tokenizer.texts_to_sequences(val_sentences)
+    val_padded_sequences = pad_sequences(val_sequences, maxlen=max_sequence_length)
+
+    # Convert validation intents to one-hot encodings
+    val_unique_intents = list(set(val_intents))
+
+    # Convert validation intents to one-hot encodings
+    val_labels = np.zeros((len(val_sentences), len(val_unique_intents)))
+    for i, intent in enumerate(val_intents):
+        val_labels[i, val_unique_intents.index(intent)] = 1
+
+
+    print()
+    print("...just finished converting the validation intents into one-hot encodings and padding")
+    print()
+
+
+
+    ##################################################################################################
+    #compute accuracy and loss on the validation set
+    val_loss, val_accuracy = model.evaluate(val_padded_sequences, val_labels)
+    print('Validation Accuracy: {:.2f}%'.format(val_accuracy * 100))
+    print('Validation Loss:', val_loss)
+    print()
+
+
+
+    
+else:
+    
+    load_model_file = input("Enter the filename of the pre-trained model: ")
+    load_model_path = os.path.join(os.getcwd(), load_model_file)
+
+    if os.path.isfile(load_model_path):
+        model = load_model(load_model_path)
+        print("Pre-trained model loaded from '{}'.".format(load_model_path))
+    else:
+        print("File '{}' does not exist. Please provide a valid filename.".format(load_model_file))
+        exit()
+
+
 
 
 
@@ -226,10 +242,6 @@ print()
 
 ##################################################################################################
 # Validation on user input
-
-
-# Load the saved model
-# model = tf.keras.models.load_model('Default (92%).pth')
 
 
 while True:
