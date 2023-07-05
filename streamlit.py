@@ -16,7 +16,10 @@ from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
-
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
+import streamlit as st
+from PIL import Image
 
 ##################################################################################################
 #load training dataset from JSON file
@@ -108,30 +111,39 @@ optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 
 
-train_model = input("Do you want to train a new model? (y/n): ")
+# image load
+image = Image.open('PolyDelta.png')
+
+#displaying the image on streamlit app
+st.image(image)
+
+# Set Streamlit app title
+st.title("Intent Matching App")
+
+
+train_model = st.text_input("Do you want to train a new model? (y/n): ")
 
 if train_model.lower() == 'y':
     
-    ##################################################################################################
-    #model training
+    # Model training
     history = model.fit(X_train, y_train, epochs=50, validation_data=(X_val, y_val))
 
     # Compute precision and loss on the validation set
     _, accuracy = model.evaluate(X_val, y_val)
-    print('Training Set Validation Accuracy: {:.2f}%'.format(accuracy * 100))
+    st.write('Training Set Validation Accuracy: {:.2f}%'.format(accuracy * 100))
 
     predictions = model.predict(X_val)
     predicted_intents = [intents_list_train[np.argmax(pred)] for pred in predictions]
     true_intents = [intents_list_train[np.argmax(label)] for label in y_val]
-    
+
     # Calculate precision
     precision = sum([1 for pred, true in zip(predicted_intents, true_intents) if pred == true]) / len(predicted_intents)
-    print('Precision: {:.2f}%'.format(precision * 100))
+    st.write('Precision: {:.2f}%'.format(precision * 100))
     print()
 
     # Save the trained model
     model.save('trained_model.h5')
-    print("Trained model saved as 'trained_model.h5'.")
+    st.write("Trained model saved as 'trained_model.h5'.")
     
        
        
@@ -210,8 +222,8 @@ if train_model.lower() == 'y':
     ##################################################################################################
     #compute accuracy and loss on the validation set
     val_loss, val_accuracy = model.evaluate(val_padded_sequences, val_labels)
-    print('Validation Accuracy: {:.2f}%'.format(val_accuracy * 100))
-    print('Validation Loss:', val_loss)
+    st.write('Validation Accuracy: {:.2f}%'.format(val_accuracy * 100))
+    st.write('Validation Loss:', val_loss)
     print()
 
 
@@ -222,7 +234,7 @@ if train_model.lower() == 'y':
     
 
     while True:
-        user_input = input('Enter a query (or enter "exit" to quit): ')
+        user_input = st.text_input('Enter a query (or enter "exit" to quit): ')
         if user_input.lower() == 'exit':
             break
 
@@ -235,25 +247,25 @@ if train_model.lower() == 'y':
         sorted_indices = np.argsort(prediction)[::-1]  # Sort indices in descending order
 
         # Print intents and probabilities
-        print('Predicted Intents:')
+        st.write('Predicted Intents:')
         for i in sorted_indices:
             intent = unique_intents[i]
             probability = prediction[i] * 100
-            print('- {}: {:.2f}%'.format(intent, probability))
+            st.write('- {}: {:.2f}%'.format(intent, probability))
 
 
     
 else:
     
-    load_model_file = input("Enter the filename of the pre-trained model: ")
+    load_model_file = st.text_input("Enter the filename of the pre-trained model: ")
     load_model_path = os.path.join(os.getcwd(), load_model_file)
 
     if os.path.isfile(load_model_path):
         model = load_model(load_model_path)
-        print("Pre-trained model loaded from '{}'.".format(load_model_path))
+        st.write("Pre-trained model loaded from '{}'.".format(load_model_path))
         
     else:
-        print("File '{}' does not exist. Please provide a valid filename.".format(load_model_file))
+        st.write("File '{}' does not exist. Please provide a valid filename.".format(load_model_file))
         exit()   
 
     ##################################################################################################
@@ -261,7 +273,7 @@ else:
 
 
     while True:
-        user_input = input('Enter a query (or enter "exit" to quit): ')
+        user_input = st.text_input('Enter a query (or enter "exit" to quit): ')
         if user_input.lower() == 'exit':
             break
 
@@ -274,8 +286,8 @@ else:
         sorted_indices = np.argsort(prediction)[::-1]  # Sort indices in descending order
 
         # Print intents and probabilities
-        print('Predicted Intents:')
+        st.write('Predicted Intents:')
         for i in sorted_indices:
             intent = unique_intents[i]
             probability = prediction[i] * 100
-            print('- {}: {:.2f}%'.format(intent, probability))
+            st.write('- {}: {:.2f}%'.format(intent, probability))
