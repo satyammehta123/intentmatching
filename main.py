@@ -20,7 +20,7 @@ import tensorflow as tf
 import torch
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
-
+import streamlit as st
 
 ##################################################################################################
 #load training dataset from JSON file
@@ -111,16 +111,20 @@ learning_rate = 0.001
 optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 
-train_model = input("Do you want to train a new model? (y/n): ")
+
+# Set Streamlit app title
+st.title("Intent Matching App")
+
+train_model = st.text_input("Do you want to train a new model? (y/n): ")
 
 if train_model.lower() == 'y':
     
     # Model training
-    history = model.fit(X_train, y_train, epochs=50, validation_data=(X_val, y_val))
+    history = model.fit(X_train, y_train, epochs=20, validation_data=(X_val, y_val))
 
     # Compute precision and loss on the validation set
     _, accuracy = model.evaluate(X_val, y_val)
-    print('Validation Accuracy: {:.2f}%'.format(accuracy * 100))
+    st.write('Validation Accuracy: {:.2f}%'.format(accuracy * 100))
 
     predictions = model.predict(X_val)
     predicted_intents = [intents_list_train[np.argmax(pred)] for pred in predictions]
@@ -128,12 +132,12 @@ if train_model.lower() == 'y':
 
     # Calculate precision
     precision = sum([1 for pred, true in zip(predicted_intents, true_intents) if pred == true]) / len(predicted_intents)
-    print('Precision: {:.2f}%'.format(precision * 100))
+    st.write('Precision: {:.2f}%'.format(precision * 100))
     print()
 
     # Save the trained model
     model.save('trained_model.h5')
-    print("Trained model saved as 'trained_model.h5'.")
+    st.write("Trained model saved as 'trained_model.h5'.")
     
        
        
@@ -212,54 +216,74 @@ if train_model.lower() == 'y':
     ##################################################################################################
     #compute accuracy and loss on the validation set
     val_loss, val_accuracy = model.evaluate(val_padded_sequences, val_labels)
-    print('Validation Accuracy: {:.2f}%'.format(val_accuracy * 100))
-    print('Validation Loss:', val_loss)
+    st.write('Validation Accuracy: {:.2f}%'.format(val_accuracy * 100))
+    st.write('Validation Loss:', val_loss)
     print()
 
+
+
+    ##################################################################################################
+    # Validation on user input
+
+    
+
+    while True:
+        user_input = st.text_input('Enter a query (or enter "exit" to quit): ')
+        if user_input.lower() == 'exit':
+            break
+
+        # Tokenize and pad user input
+        user_sequence = tokenizer.texts_to_sequences([user_input])
+        user_padded_sequence = pad_sequences(user_sequence, maxlen=max_sequence_length)
+
+        # Get prediction
+        prediction = model.predict(user_padded_sequence)[0]
+        sorted_indices = np.argsort(prediction)[::-1]  # Sort indices in descending order
+
+        # Print intents and probabilities
+        st.write('Predicted Intents:')
+        for i in sorted_indices:
+            intent = unique_intents[i]
+            probability = prediction[i] * 100
+            st.write('- {}: {:.2f}%'.format(intent, probability))
 
 
     
 else:
     
-    load_model_file = input("Enter the filename of the pre-trained model: ")
+    load_model_file = st.text_input("Enter the filename of the pre-trained model: ")
     load_model_path = os.path.join(os.getcwd(), load_model_file)
 
     if os.path.isfile(load_model_path):
         model = load_model(load_model_path)
-        print("Pre-trained model loaded from '{}'.".format(load_model_path))
+        st.write("Pre-trained model loaded from '{}'.".format(load_model_path))
+        
+        
+
+    ##################################################################################################
+    # Validation on user input
+
+
+    while True:
+        user_input = st.text_input('Enter a query (or enter "exit" to quit): ')
+        if user_input.lower() == 'exit':
+            break
+
+        # Tokenize and pad user input
+        user_sequence = tokenizer.texts_to_sequences([user_input])
+        user_padded_sequence = pad_sequences(user_sequence, maxlen=max_sequence_length)
+
+        # Get prediction
+        prediction = model.predict(user_padded_sequence)[0]
+        sorted_indices = np.argsort(prediction)[::-1]  # Sort indices in descending order
+
+        # Print intents and probabilities
+        st.write('Predicted Intents:')
+        for i in sorted_indices:
+            intent = unique_intents[i]
+            probability = prediction[i] * 100
+            st.write('- {}: {:.2f}%'.format(intent, probability))
+
     else:
-        print("File '{}' does not exist. Please provide a valid filename.".format(load_model_file))
+        st.write("File '{}' does not exist. Please provide a valid filename.".format(load_model_file))
         exit()
-
-
-
-
-
-
-
-
-
-
-##################################################################################################
-# Validation on user input
-
-
-while True:
-    user_input = input('Enter a query (or enter "exit" to quit): ')
-    if user_input.lower() == 'exit':
-        break
-
-    # Tokenize and pad user input
-    user_sequence = tokenizer.texts_to_sequences([user_input])
-    user_padded_sequence = pad_sequences(user_sequence, maxlen=max_sequence_length)
-
-    # Get prediction
-    prediction = model.predict(user_padded_sequence)[0]
-    sorted_indices = np.argsort(prediction)[::-1]  # Sort indices in descending order
-
-    # Print intents and probabilities
-    print('Predicted Intents:')
-    for i in sorted_indices:
-        intent = unique_intents[i]
-        probability = prediction[i] * 100
-        print('- {}: {:.2f}%'.format(intent, probability))

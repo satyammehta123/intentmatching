@@ -63,6 +63,7 @@ unique_intents = list(set(intents_list_train))
 load_model_file = st.text_input("Enter the filename of the pre-trained model:")
 load_model_path = os.path.join(os.getcwd(), load_model_file)
 model = None
+
 if os.path.isfile(load_model_path):
     model = load_model(load_model_path)
     st.write("Pre-trained model loaded from '{}'.".format(load_model_path))
