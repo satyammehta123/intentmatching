@@ -28,6 +28,7 @@ Preprocessing: We begin by preprocessing the training data. This includes removi
 Model Architecture: We construct a sequential model using Keras. The model consists of an embedding layer, an LSTM layer, a dropout layer, and a dense layer. Dropout regularizes the model to prevent overfitting, and the dense layer produces the final output probabilities for each intent category.
 
 Evaluation: We evaluate the trained model on a validation dataset, computing metrics such as accuracy and loss. This assessment allows us to measure the model's performance and validate its ability to correctly predict intents for unseen data.
+
 1. What information is typically included in immigration records?
 2. Are there any restrictions on accessing historical travel information?
 3. I need to request a tax transcript from the IRS. What are the available methods for obtaining it?
