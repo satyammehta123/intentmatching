@@ -22,6 +22,8 @@ from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 import streamlit as st
 
+from PIL import Image
+
 ##################################################################################################
 #load training dataset from JSON file
 with open('intents.json', 'r') as file:
@@ -112,19 +114,26 @@ optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 
 
+# image load
+image = Image.open('PolyDelta.png')
+
+#displaying the image on streamlit app
+st.image(image)
+
 # Set Streamlit app title
 st.title("Intent Matching App")
+
 
 train_model = st.text_input("Do you want to train a new model? (y/n): ")
 
 if train_model.lower() == 'y':
     
     # Model training
-    history = model.fit(X_train, y_train, epochs=20, validation_data=(X_val, y_val))
+    history = model.fit(X_train, y_train, epochs=50, validation_data=(X_val, y_val))
 
     # Compute precision and loss on the validation set
     _, accuracy = model.evaluate(X_val, y_val)
-    st.write('Validation Accuracy: {:.2f}%'.format(accuracy * 100))
+    st.write('Training Set Validation Accuracy: {:.2f}%'.format(accuracy * 100))
 
     predictions = model.predict(X_val)
     predicted_intents = [intents_list_train[np.argmax(pred)] for pred in predictions]
@@ -258,7 +267,9 @@ else:
         model = load_model(load_model_path)
         st.write("Pre-trained model loaded from '{}'.".format(load_model_path))
         
-        
+    else:
+        st.write("File '{}' does not exist. Please provide a valid filename.".format(load_model_file))
+        exit()   
 
     ##################################################################################################
     # Validation on user input
@@ -283,7 +294,3 @@ else:
             intent = unique_intents[i]
             probability = prediction[i] * 100
             st.write('- {}: {:.2f}%'.format(intent, probability))
-
-    else:
-        st.write("File '{}' does not exist. Please provide a valid filename.".format(load_model_file))
-        exit()
