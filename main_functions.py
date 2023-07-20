@@ -1,8 +1,8 @@
 
-#created by Kirk Ogunrinde on July 3rd, 2023
+# created by Kirk Ogunrinde on July 3rd, 2023
 
 ##################################################################################################
-#IMPORTS
+# IMPORTS
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
@@ -10,7 +10,7 @@ from nltk.tokenize import word_tokenize
 
 
 ##################################################################################################
-#preprocess sentences by removing stopwords, lemmatising, and tokenising
+# preprocess sentences by removing stopwords, lemmatising, and tokenising
 def preprocess_sentence(sentence):
 
     #set stopword-removing language to English

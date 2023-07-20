@@ -140,8 +140,8 @@ if train_model.lower() == 'y':
     print()
 
     # Save the trained model
-    model.save('trained_model.h5')
-    st.write("Trained model saved as 'trained_model.h5'.")
+    model.save('trained_model.tf')
+    st.write("Trained model saved as 'trained_model.tf'.")
     
        
        
@@ -258,7 +258,7 @@ else:
     load_model_file = st.text_input("Enter the filename of the pre-trained model: ")
     load_model_path = os.path.join(os.getcwd(), load_model_file)
 
-    if os.path.isfile(load_model_path):
+    if os.path.exists(load_model_path):
         model = load_model(load_model_path)
         st.write("Pre-trained model loaded from '{}'.".format(load_model_path))
         

@@ -19,7 +19,7 @@ import tensorflow as tf
 
 
 ##################################################################################################
-#load training dataset from JSON file
+# load training dataset from JSON file
 with open('intents.json', 'r') as file:
     intents_train = json.load(file)
 
@@ -30,22 +30,22 @@ print()
 
 
 ##################################################################################################
-#preprocess training data
+# preprocess training data
 intents_list_train = []
 sentences_list_train = []
 
-#looop through the intent.json file
+# looop through the intent.json file
 for block in intents_train['intents']:
     
-    #temp equals the intent (IRS Records, Medical Records, etc.)
+    # temp equals the intent (IRS Records, Medical Records, etc.)
     temp = block['tag']
     
-    #add each sentence to the sentences_list_train and add its intent to the intents_list_train so we can have parallel lists
+    # add each sentence to the sentences_list_train and add its intent to the intents_list_train so we can have parallel lists
     for query in block['patterns']:
         sentences_list_train.append(query)
         intents_list_train.append(temp)
 
-#preprocess each sentence (remove stopwords, lemmatise, tokenise)
+# preprocess each sentence (remove stopwords, lemmatise, tokenise)
 preprocessed_sentences_train = []
 for sentence in sentences_list_train:
     preprocessed_sentences_train.append(preprocess_sentence(sentence))
@@ -83,7 +83,7 @@ for i, intent in enumerate(intents_list_train):
     labels[i, unique_intents.index(intent)] = 1
 
 #split data into training and validation sets
-X_train, X_val, y_train, y_val = train_test_split(padded_sequences, labels, test_size=0.7, random_state=42)
+X_train, X_val, y_train, y_val = train_test_split(padded_sequences, labels, test_size=0.2, random_state=42)
 
 
 print()
