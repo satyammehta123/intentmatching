@@ -1,8 +1,3 @@
-
-#created by Kirk Ogunrinde on the 3rd of July, 2023
-
-
-
 ##################################################################################################
 #IMPORTS
 from main_functions import preprocess_sentence
